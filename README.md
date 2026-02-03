@@ -1,4 +1,4 @@
-# 小说脉络分析系统 (Novel Analysis Agent)
+# LikeNovel - 小说脉络分析系统
 
 基于Neo4j图数据库的智能小说分析系统，支持人物关系、情节时间线、世界观结构等多维度分析。
 
@@ -32,7 +32,7 @@
 
 ```bash
 # 克隆仓库
-git clone <your-repo-url>
+git clone https://github.com/mirayan-2705024/LikeNovel.git
 cd novelanalys
 
 # 复制环境变量配置
