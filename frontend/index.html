@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LikeNovel - 小说脉络分析系统</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1>📚 LikeNovel - 小说脉络分析系统</h1>
+            <p class="subtitle">基于Neo4j的智能小说分析平台</p>
+        </header>
+
+        <!-- 上传区域 -->
+        <section class="upload-section">
+            <div class="upload-box">
+                <h2>📤 上传小说文件</h2>
+                <input type="file" id="fileInput" accept=".txt" />
+                <button id="uploadBtn" class="btn btn-primary">上传并分析</button>
+                <div id="uploadStatus" class="status-message"></div>
+            </div>
+
+            <!-- 小说列表 -->
+            <div class="novel-list">
+                <h3>已分析的小说</h3>
+                <select id="novelSelect" class="novel-select">
+                    <option value="">选择小说...</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- 导航标签 -->
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="overview">📊 概览</button>
+            <button class="tab-btn" data-tab="characters">👥 人物关系</button>
+            <button class="tab-btn" data-tab="timeline">⏱️ 时间线</button>
+            <button class="tab-btn" data-tab="locations">🗺️ 地点</button>
+            <button class="tab-btn" data-tab="emotions">💭 情感</button>
+        </nav>
+
+        <!-- 内容区域 -->
+        <main class="content">
+            <!-- 概览标签 -->
+            <div id="overview" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>章节数</h3>
+                        <p class="stat-value" id="statChapters">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>总字数</h3>
+                        <p class="stat-value" id="statWords">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>人物数</h3>
+                        <p class="stat-value" id="statCharacters">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>关系数</h3>
+                        <p class="stat-value" id="statRelations">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>事件数</h3>
+                        <p class="stat-value" id="statEvents">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>地点数</h3>
+                        <p class="stat-value" id="statLocations">-</p>
+                    </div>
+                </div>
+
+                <div class="overview-info">
+                    <h3>📖 小说信息</h3>
+                    <div id="novelInfo">
+                        <p>请上传小说文件或选择已分析的小说</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 人物关系标签 -->
+            <div id="characters" class="tab-content">
+                <div class="split-view">
+                    <div class="graph-container">
+                        <h3>人物关系图谱</h3>
+                        <div id="cy" class="cytoscape-container"></div>
+                    </div>
+                    <div class="detail-panel">
+                        <h3>人物详情</h3>
+                        <div id="characterDetail">
+                            <p>点击图谱中的节点查看详情</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 时间线标签 -->
+            <div id="timeline" class="tab-content">
+                <h3>事件时间线</h3>
+                <div class="timeline-controls">
+                    <label>
+                        <input type="checkbox" id="showMainPlotOnly" />
+                        只显示主线事件
+                    </label>
+                    <label>
+                        章节筛选:
+                        <select id="chapterFilter">
+                            <option value="all">全部章节</option>
+                        </select>
+                    </label>
+                </div>
+                <div id="timelineContainer" class="timeline-container"></div>
+            </div>
+
+            <!-- 地点标签 -->
+            <div id="locations" class="tab-content">
+                <h3>地点分析</h3>
+                <div id="locationList" class="location-list"></div>
+            </div>
+
+            <!-- 情感标签 -->
+            <div id="emotions" class="tab-content">
+                <h3>情感分析</h3>
+                <div class="emotion-charts">
+                    <div class="chart-container">
+                        <canvas id="emotionCurveChart"></canvas>
+                    </div>
+                </div>
+                <div id="emotionDetails" class="emotion-details"></div>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>LikeNovel © 2024 | Powered by Neo4j & Python</p>
+        </footer>
+    </div>
+
+    <script src="js/api-client.js"></script>
+    <script src="js/graph-visualizer.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
