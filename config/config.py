@@ -30,6 +30,12 @@ class Config:
     MIN_CHARACTER_MENTIONS = int(os.getenv('MIN_CHARACTER_MENTIONS', 3))
     MIN_RELATION_STRENGTH = float(os.getenv('MIN_RELATION_STRENGTH', 0.3))
 
+    # AI 大模型配置
+    AI_PROVIDER = os.getenv('AI_PROVIDER', 'openai')  # openai 或 anthropic
+    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+    ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY')
+    ENABLE_AI_ANALYSIS = os.getenv('ENABLE_AI_ANALYSIS', 'false').lower() == 'true'
+
     # 数据目录
     DATA_DIR = 'data'
     DICTIONARIES_DIR = os.path.join(DATA_DIR, 'dictionaries')
