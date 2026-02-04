@@ -6,7 +6,7 @@ from collections import defaultdict
 from typing import List, Dict, Tuple, Set
 import re
 import logging
-from .text_processor import TextProcessor
+from backend.analyzers.text_processor import TextProcessor
 
 logger = logging.getLogger(__name__)
 

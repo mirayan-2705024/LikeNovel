@@ -5,7 +5,7 @@
 from collections import Counter
 from typing import List, Dict, Set
 import logging
-from .text_processor import TextProcessor
+from backend.analyzers.text_processor import TextProcessor
 
 logger = logging.getLogger(__name__)
 

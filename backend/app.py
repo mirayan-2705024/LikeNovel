@@ -4,7 +4,12 @@ Flask应用主入口
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import os
+import sys
 import logging
+
+# 添加项目根目录到 Python 路径
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from config.config import Config
 
 # 配置日志

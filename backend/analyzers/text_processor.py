@@ -145,7 +145,7 @@ class TextProcessor:
         patterns = [
             r'"([^"]+)"',  # 双引号
             r'"([^"]+)"',  # 中文双引号
-            r''([^']+)'',  # 中文单引号
+            r"'([^']+)'",  # 中文单引号
         ]
 
         for pattern in patterns:
