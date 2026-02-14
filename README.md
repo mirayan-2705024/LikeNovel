@@ -56,7 +56,12 @@ http://localhost:5000
 
 ### 核心功能（已实现）
 
-- 📚 **文本解析**: 支持TXT格式，自动识别章节结构
+- � **双层 AI 认知架构** (v0.7.0 新增):
+  - **Micro-Macro Sliding Window**: 完美解决长文本 Token 限制
+  - **Global Entity Archive**: 建立全知视角的实体档案库
+  - **Mystery Tracking**: 像侦探一样自动追踪伏笔和填坑
+
+- �📚 **文本解析**: 支持TXT格式，自动识别章节结构
 
 - 🤖 **AI 增强分析** (v0.4.1 新增):
   - 支持 OpenAI GPT-4o-mini 和 Anthropic Claude 3 Haiku
@@ -603,6 +608,26 @@ MIT License
 </details>
 
 ## 📝 更新日志
+
+### v0.7.0 (2026-02-14)
+- 🚀 **双层 AI 认知架构 (Micro-Macro)**
+  - 微观窗口 (5章)：精准提取细节
+  - 宏观窗口 (25章)：把握长线剧情
+- 📚 **全局实体档案系统 (Global Entity Archive)**
+  - 自动归档人物、地点、物品的全书历史
+  - 支持“全知视角”查询
+- 🕵️ **伏笔追踪系统 (Mystery Tracking)**
+  - 自动检测伏笔埋设 (Setup)
+  - 自动识别伏笔回收 (Payoff)
+- 🎨 **前端体验升级**
+  - 实时异步任务进度条
+  - 纯 AI 深度分析模式支持
+
+### v0.4.1 (2026-02-14)
+- ✨ **AI 增强分析**
+  - 集成 OpenAI/Claude 大模型
+  - 支持混合模式 (Hybrid Mode)
+  - 智能章节摘要生成
 
 ### v0.4.0 (2026-02-03)
 - ✅ 完成Milestone 4：Web界面
