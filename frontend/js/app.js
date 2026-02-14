@@ -94,9 +94,17 @@ async function handleUpload() {
         console.log('上传成功:', uploadResult);
 
         showStatus('上传成功，开始分析...', 'info');
+        
+        // 显示进度条
+        progressContainer.style.display = 'block';
+        updateProgress(0, '正在初始化...');
 
-        // 分析小说
-        const analysisResult = await apiClient.analyzeNovel(uploadResult.filepath);
+        // 启动异步分析
+        const taskInfo = await apiClient.analyzeNovelAsync(uploadResult.filepath);
+        console.log('分析任务已启动:', taskInfo);
+        
+        // 轮询任务状态
+        const analysisResult = await pollTaskStatus(taskInfo.task_id);
         console.log('分析完成:', analysisResult);
 
         showStatus(`分析完成！发现 ${analysisResult.statistics.characters} 个人物，${analysisResult.statistics.events} 个事件`, 'success');
@@ -114,7 +122,45 @@ async function handleUpload() {
         showStatus(`错误: ${error.message}`, 'error');
     } finally {
         uploadBtn.disabled = false;
+        // 延迟隐藏进度条
+        setTimeout(() => {
+            progressContainer.style.display = 'none';
+            updateProgress(0, '');
+        }, 3000);
     }
+}
+
+/**
+ * 轮询任务状态
+ */
+async function pollTaskStatus(taskId) {
+    return new Promise((resolve, reject) => {
+        const interval = setInterval(async () => {
+            try {
+                const task = await apiClient.getTaskStatus(taskId);
+                updateProgress(task.progress, task.message);
+
+                if (task.status === 'completed') {
+                    clearInterval(interval);
+                    resolve(task.result);
+                } else if (task.status === 'failed') {
+                    clearInterval(interval);
+                    reject(new Error(task.error || '分析失败'));
+                }
+            } catch (error) {
+                clearInterval(interval);
+                reject(error);
+            }
+        }, 1000); // 每秒轮询一次
+    });
+}
+
+/**
+ * 更新进度条
+ */
+function updateProgress(percent, message) {
+    progressBar.style.width = `${percent}%`;
+    progressText.textContent = `${percent}% - ${message}`;
 }
 
 /**

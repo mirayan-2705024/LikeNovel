@@ -66,12 +66,41 @@ body {
 }
 
 .upload-box {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     text-align: center;
-    padding: 20px;
-    border: 2px dashed var(--border-color);
-    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
     margin-bottom: 20px;
-    transition: all 0.3s ease;
+}
+
+/* 进度条样式 */
+.progress-container {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.progress-bar-wrapper {
+    width: 100%;
+    height: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--primary-color);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.9em;
+    color: #666;
 }
 
 .upload-box:hover {

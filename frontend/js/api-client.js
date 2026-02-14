@@ -50,6 +50,44 @@ class APIClient {
     }
 
     /**
+     * 异步分析小说
+     * @param {string} filepath - 文件路径
+     * @returns {Promise<Object>} 任务信息 {message, task_id}
+     */
+    async analyzeNovelAsync(filepath) {
+        const response = await fetch(`${API_BASE_URL}/analyze/async`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ filepath })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || '分析启动失败');
+        }
+
+        return await response.json();
+    }
+
+    /**
+     * 获取任务状态
+     * @param {string} taskId - 任务ID
+     * @returns {Promise<Object>} 任务状态
+     */
+    async getTaskStatus(taskId) {
+        const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`);
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || '获取任务状态失败');
+        }
+
+        return await response.json();
+    }
+
+    /**
      * 获取小说列表
      * @returns {Promise<Array>} 小说列表
      */

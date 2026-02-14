@@ -35,6 +35,9 @@ class Config:
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
     ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY')
     ENABLE_AI_ANALYSIS = os.getenv('ENABLE_AI_ANALYSIS', 'false').lower() == 'true'
+    
+    # 分析模式：'standard' (传统NLP), 'hybrid' (混合), 'pure_ai' (纯AI)
+    ANALYSIS_MODE = os.getenv('ANALYSIS_MODE', 'hybrid')
 
     # 数据目录
     DATA_DIR = 'data'

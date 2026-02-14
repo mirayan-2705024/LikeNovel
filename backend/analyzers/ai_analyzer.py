@@ -47,6 +47,97 @@ class AIAnalyzer:
             logger.error(f"AI 客户端初始化失败: {e}")
             self.enabled = False
 
+    def analyze_chapter_structure(self, text: str, chapter: int) -> Dict[str, Any]:
+        """
+        [Step 1] 分析章节结构化摘要
+        
+        Args:
+            text: 章节文本
+            chapter: 章节号
+            
+        Returns:
+            结构化摘要
+        """
+        if not self.enabled:
+            return {}
+            
+        prompt = f"""请分析第 {chapter} 章，生成高浓度的结构化摘要（JSON格式）：
+
+章节文本：
+{text[:3000]} # 限制长度
+
+请提取：
+1. time: 时间点（如：深夜、三年后）
+2. location: 主要地点
+3. characters: 登场人物列表（仅名字）
+4. summary: 剧情概要（100字以内，包含核心冲突和转折）
+5. sentiment: 情感基调（如：紧张、悲伤、欢快）
+6. key_event: 本章最重要的一个事件
+7. potential_mysteries: 潜在的伏笔或未解之谜（列表，如"神秘的黑衣人身份"、"戒指里的灵魂"）
+
+只返回 JSON，不要其他内容。"""
+
+        try:
+            result = self._call_api(prompt, max_tokens=500)
+            return json.loads(result)
+        except Exception as e:
+            logger.error(f"AI 章节结构分析失败: {e}")
+            return {
+                "time": "未知",
+                "location": "未知",
+                "characters": [],
+                "summary": "分析失败",
+                "sentiment": "中性",
+                "key_event": "未知",
+                "potential_mysteries": []
+            }
+
+    def analyze_macro_window(self, summaries: List[Dict], start_chapter: int, end_chapter: int, unresolved_mysteries: List[str] = None) -> Dict[str, Any]:
+        """
+        [Step 2] 分析宏观窗口（基于摘要）
+        
+        Args:
+            summaries: 章节摘要列表
+            start_chapter: 起始章
+            end_chapter: 结束章
+            unresolved_mysteries: 当前未解决的谜题列表
+            
+        Returns:
+            宏观分析结果
+        """
+        if not self.enabled:
+            return {}
+            
+        # 将摘要转换为文本输入
+        context = f"以下是小说第 {start_chapter} 章到第 {end_chapter} 章的剧情摘要：\n\n"
+        for i, s in enumerate(summaries):
+            context += f"第 {start_chapter + i} 章 [{s.get('time', '')} @ {s.get('location', '')}]: {s.get('summary', '')}\n"
+        
+        mysteries_text = ""
+        if unresolved_mysteries:
+            mysteries_text = "\n当前未解决的伏笔/谜题：\n" + "\n".join([f"- {m}" for m in unresolved_mysteries])
+            
+        prompt = f"""基于以上剧情摘要，请分析这段情节的宏观脉络（JSON格式）：
+
+{context}
+{mysteries_text}
+
+请提取：
+1. plot_arc: 剧情弧光（起承转合）
+2. active_relations: 活跃的人物关系变化（如：A和B从误会到和解）
+3. key_conflicts: 主要冲突点
+4. characters: 关键人物及其在本阶段的作用
+5. resolved_mysteries: 在本阶段得到解决或揭示的伏笔（从上述列表中选择并解释）
+
+只返回 JSON，不要其他内容。"""
+
+        try:
+            result = self._call_api(prompt, max_tokens=1000)
+            return json.loads(result)
+        except Exception as e:
+            logger.error(f"AI 宏观窗口分析失败: {e}")
+            return {}
+
     def analyze_characters(self, text: str, chapter: int) -> Dict[str, Any]:
         """
         使用 AI 分析人物
