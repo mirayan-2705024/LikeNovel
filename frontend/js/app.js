@@ -67,6 +67,104 @@ function bindEvents() {
 
     // 监听节点选择事件
     document.addEventListener('nodeSelected', handleNodeSelected);
+    
+    // 初始化聊天窗口
+    initChatWidget();
+}
+
+/**
+ * 初始化聊天窗口
+ */
+function initChatWidget() {
+    const chatWidget = document.getElementById('chatWidget');
+    const toggleBtn = document.getElementById('toggleChatBtn');
+    const sendBtn = document.getElementById('sendBtn');
+    const chatInput = document.getElementById('chatInput');
+    const messagesContainer = document.getElementById('chatMessages');
+
+    // 切换最小化
+    toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        chatWidget.classList.toggle('minimized');
+        toggleBtn.textContent = chatWidget.classList.contains('minimized') ? '+' : '−';
+    });
+    
+    // 整个 Header 也可以点击切换
+    document.querySelector('.chat-header').addEventListener('click', () => {
+        if (chatWidget.classList.contains('minimized')) {
+            chatWidget.classList.remove('minimized');
+            toggleBtn.textContent = '−';
+        }
+    });
+
+    // 发送消息
+    const sendMessage = async () => {
+        const message = chatInput.value.trim();
+        if (!message) return;
+        
+        if (!currentNovelId) {
+            addMessage('Please upload or select a novel first!', 'system');
+            return;
+        }
+
+        // 添加用户消息
+        addMessage(message, 'user');
+        chatInput.value = '';
+        
+        // 添加 Loading 状态
+        const loadingId = addMessage('Thinking...', 'ai');
+
+        try {
+            // 调用 API
+            const response = await fetch(`/api/novel/${currentNovelId}/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message })
+            });
+            
+            const data = await response.json();
+            
+            // 移除 Loading，显示回答
+            removeMessage(loadingId);
+            addMessage(data.reply || data.error, 'ai');
+            
+        } catch (error) {
+            removeMessage(loadingId);
+            addMessage('Sorry, something went wrong.', 'system');
+        }
+    };
+
+    sendBtn.addEventListener('click', sendMessage);
+    
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+}
+
+/**
+ * 添加消息到聊天窗口
+ */
+function addMessage(text, type) {
+    const container = document.getElementById('chatMessages');
+    const msgDiv = document.createElement('div');
+    const msgId = 'msg_' + Date.now();
+    
+    msgDiv.id = msgId;
+    msgDiv.className = `message ${type}`;
+    msgDiv.textContent = text;
+    
+    container.appendChild(msgDiv);
+    container.scrollTop = container.scrollHeight;
+    
+    return msgId;
+}
+
+/**
+ * 移除消息
+ */
+function removeMessage(id) {
+    const msg = document.getElementById(id);
+    if (msg) msg.remove();
 }
 
 /**

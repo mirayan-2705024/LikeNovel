@@ -614,6 +614,73 @@ def get_emotions(novel_id):
         return jsonify({"error": str(e)}), 500
 
 
+@api_bp.route('/novel/<novel_id>/chat', methods=['POST'])
+def chat_with_novel(novel_id):
+    """
+    Chat with Novel (RAG + GraphRAG)
+    """
+    try:
+        data = request.get_json()
+        message = data.get('message', '')
+        
+        if not message:
+            return jsonify({"error": "Empty message"}), 400
+            
+        if novel_id not in analysis_cache:
+            return jsonify({"error": "Novel not found"}), 404
+            
+        # 获取缓存的分析数据
+        cache = analysis_cache[novel_id]
+        
+        # 1. 检索上下文 (RAG)
+        # 这里做一个简单的关键词匹配来模拟向量检索
+        context_snippets = []
+        
+        # 检索章节摘要
+        if 'timeline_analysis' in cache and 'structure_graph' in cache['timeline_analysis']:
+            for node in cache['timeline_analysis']['structure_graph']:
+                # 如果用户问题包含摘要中的关键词
+                if any(word in message for word in node['summary'].split(' ')):
+                    context_snippets.append(f"Chapter {node['range']}: {node['summary']}")
+        
+        # 检索全局档案
+        if 'timeline_analysis' in cache and 'global_archives' in cache['timeline_analysis']:
+            archives = cache['timeline_analysis']['global_archives']
+            # 检索人物档案
+            for name, history in archives.get('characters', {}).items():
+                if name in message:
+                    context_snippets.append(f"Character {name} history: {str(history[:5])}...") # 限制长度
+        
+        # 2. 构造 Prompt
+        context_text = "\n".join(context_snippets[:10]) # 限制上下文数量
+        
+        # 调用 AI 回答
+        # 注意：这里我们需要实例化一个新的 AIAnalyzer，或者复用全局的
+        # 为了演示，我们假设 Config 里有 Key
+        from backend.analyzers.ai_analyzer import AIAnalyzer
+        ai = AIAnalyzer()
+        
+        if not ai.enabled:
+            return jsonify({"reply": "AI 服务未配置，无法进行对话。"}), 200
+            
+        prompt = f"""You are a novel expert. Answer the user's question based strictly on the provided context.
+        
+Context:
+{context_text}
+
+Question: {message}
+
+Answer:"""
+
+        reply = ai._call_api(prompt, max_tokens=300)
+        
+        return jsonify({"reply": reply}), 200
+
+    except Exception as e:
+        logger.error(f"Chat error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @api_bp.route('/character/<novel_id>/<character_name>', methods=['GET'])
 def get_character_profile(novel_id, character_name):
     """获取人物详细信息"""
